@@ -1,7 +1,6 @@
 class NoeudBinaire:
 
     def __init__(self, valeur, gauche=None, droit=None): #constructeur
-	#déclaration des variables pour NoeudBinaire
         self._valeur = valeur # le '_' signifie que l'attributs est privé
         self._gauche = gauche
         self._droit = droit
@@ -102,6 +101,26 @@ class NoeudBinaire:
                 self._droit.ajouter_element(element)
         else:
             print("L'élément existe déjà")
+
+     #Membre B
+    def parcours_prefixe(self):
+        pass
+
+
+    def parcours_infixe(self):
+        pass
+
+    
+    def parcours_suffixe(self):
+        pass
+
+
+    def parcours_largeur(self):
+        pass
+
+   
+    def __str__(self):
+        pass
             
 
 #main
