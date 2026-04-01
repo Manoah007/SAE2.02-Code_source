@@ -102,21 +102,76 @@ class NoeudBinaire:
         else:
             print("L'élément existe déjà")
 
-     #Membre B
+#============#
+#  Membre B -  #
+#============#
+
     def parcours_prefixe(self):
-        pass
+        """
+        Cette méthode va parcourir un arbre binaire
+        dans l'ordre suivant : racine -> gauche -> droite.
+        """
+        
+        if self is not None: #Condition d'arrêt de la récursion
+
+            # On affiche la valeur de la racine 
+            print(self.valeur)
+
+            # On regarde si une branche gauche existe 
+            if  self.get_gauche():
+                # On se déplace vers la racine au bout de la racine de gauche
+                self.get_gauche().parcours_prefixe()
+
+            # On regarde si une branche droite existe
+            if self.get_droit():
+                # On se déplace vers la racine au bout de la racine de droite
+                self.get_droit().parcours_prefixe()
 
 
     def parcours_infixe(self):
-        pass
+        """ 
+        Cette méthode va parcourir un arbre binaire
+        dans l'ordre suivant : gauche -> racine -> droite.
+        """
+
+        if self is not None:
+
+            if  self.get_gauche():
+                self.get_gauche().parcours_prefixe()
+
+            print(self.valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
+            
+            if self.get_droit():
+                self.get_droit().parcours_prefixe()
 
     
     def parcours_suffixe(self):
-        pass
+        """
+        Cette méthode va parcourir un arbre binaire
+        dans l'ordre suivant : gauche -> droite -> racine.
+        """
+        if self is not None:
+
+            if  self.get_gauche():
+                self.get_gauche().parcours_prefixe()
+
+            print(self.valeur)
+            
+            if self.get_droit():
+                self.get_droit().parcours_prefixe()
 
 
     def parcours_largeur(self):
-        pass
+        """
+        
+        """
+        if self.est_feuille():
+            return 0
+
+        h_gauche = self.gauche.hauteur() if self.gauche else 0
+        h_droite = self.droit.hauteur() if self.droit else 0
+        
+        return 1 + max(h_gauche, h_droite)
 
    
     def __str__(self):
