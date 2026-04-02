@@ -194,7 +194,8 @@ class NoeudBinaire:
 
     def largeur_max(self):
         """
-        Calcule la largeur maximale de l'arbre    
+        Cherche la largeur maximale de l'arbre 
+        puis la retourne. 
         """
         
         ascenceur = 0
@@ -205,15 +206,32 @@ class NoeudBinaire:
         # On continue de monter dans l'arbre
         while largeur_actuelle != 0: 
             largeur_actuelle = self.parcours_largeur(ascenceur) # personne a l'étage suivant
+            
             if largeur_max < largeur_actuelle:
                 largeur_max = largeur_actuelle
             ascenceur += 1
 
+
         return largeur_max
 
-    def __str__(self):
-        pass
-            
+
+    def __str__(self, niveau=0):
+        """
+        Affiche l'arbre de manière hiérarchique dans le terminal.
+        Le paramètre 'niveau' gère l'espacement (l'indentation).
+        """
+
+        # On parcourt d'abord le fils DROIT (il sera en haut à droite)
+        if self.get_droit() is not None:
+            self.get_droit().afficher(niveau + 1)
+
+        # On affiche le nœud actuel avec une indentation proportionnelle au niveau
+        print("    " * niveau + "-> " + str(self.get_valeur()))
+
+        # On parcourt le fils GAUCHE (il sera en bas à droite)
+        if self.get_gauche() is not None:
+            self.get_gauche().afficher(niveau + 1)
+                
 
 #main
 if __name__ == "__main__":
