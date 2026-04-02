@@ -181,12 +181,12 @@ class NoeudBinaire:
         total_enfants = 0
 
         # On demande au fils gauche (s'il existe) de chercher au niveau suivant
-        if self.get_gauche() is not None:
-            total_enfants += self.get_gauche().largeur_etage(etage_demander, niveau_actuel + 1)
+        if self._gauche is not None:
+            total_enfants += self._gauche.largeur_etage(etage_demander, niveau_actuel + 1)
 
         # On demande au fils droit (s'il existe) de faire de même
-        if self.get_droit() is not None:
-            total_enfants += self.get_droit().largeur_etage(etage_demander, niveau_actuel + 1)
+        if self._droit is not None:
+            total_enfants += self._droit.largeur_etage(etage_demander, niveau_actuel + 1)
         
         # On renvoie la somme accumulée
         return total_enfants
@@ -215,27 +215,33 @@ class NoeudBinaire:
         return largeur_max
 
 
-    def __str__(self, niveau=0):
+    def __str__(self):
+        return self.constructeur()
+
+    def constructeur(self, niveau=0):
         """
         Affiche l'arbre de manière hiérarchique dans le terminal.
         Le paramètre 'niveau' gère l'espacement (l'indentation).
         """
 
+        affichage = ""
+        
         # On parcourt d'abord le fils DROIT (il sera en haut à droite)
-        if self.get_droit() is not None:
-            self.get_droit().afficher(niveau + 1)
+        if self._droit is not None:
+            affichage += self._droit.constructeur(niveau + 1)
 
         # On affiche le nœud actuel avec une indentation proportionnelle au niveau
-        print("    " * niveau + "-> " + str(self.get_valeur()))
+        affichage += "    " * niveau + "-> " + str(self._valeur) + "\n"
 
         # On parcourt le fils GAUCHE (il sera en bas à droite)
-        if self.get_gauche() is not None:
-            self.get_gauche().afficher(niveau + 1)
+        if self._gauche is not None:
+            affichage += self._gauche.constructeur(niveau + 1)
                 
+        return affichage
 
 #main
 if __name__ == "__main__":
-
+    """
     #Test de la méthode est_vide
     print("\n--- Test de la méthode est_vide() ---")
     noeud_plein = NoeudBinaire("A")
@@ -307,3 +313,13 @@ if __name__ == "__main__":
     racine.ajouter_element(1) 
 
     print("Nouvelle hauteur de la racine 10 (Attendu : 3) ->", racine.hauteur())
+    """
+    # Test rapide : Création d'une racine et de deux enfants
+    racine = NoeudBinaire("B")
+
+    # "A" est plus petit que "B" -> ira à GAUCHE
+    racine.ajouter_element("A")
+
+    # "C" est plus grand que "B" -> ira à DROITE
+    racine.ajouter_element("C")
+    print(racine)
