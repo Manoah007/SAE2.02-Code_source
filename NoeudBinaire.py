@@ -102,23 +102,115 @@ class NoeudBinaire:
         else:
             print("L'élément existe déjà")
 
-     #Membre B
+
+#====================#
+#  Membre B - WESLEY #
+#====================#
+
     def parcours_prefixe(self):
-        pass
+        """
+        Cette méthode va parcourir un arbre binaire
+        dans l'ordre suivant : racine -> gauche -> droite.
+        """
+        
+        if self is not None: #Condition d'arrêt de la récursion
+
+            # On affiche la valeur de la racine 
+            print(self.valeur)
+
+            # On regarde si une branche gauche existe 
+            if  self._gauche:
+                # On se déplace vers la racine au bout de la racine de gauche
+                self._gauche.parcours_prefixe()
+
+            # On regarde si une branche droite existe
+            if self._droite:
+                # On se déplace vers la racine au bout de la racine de droite
+                self._droit.parcours_prefixe()
 
 
     def parcours_infixe(self):
-        pass
+        """ 
+        Cette méthode va parcourir un arbre binaire
+        dans l'ordre suivant : gauche -> racine -> droite.
+        """
+
+        if self is not None:
+
+            if  self._gauche:
+                self._gauche.parcours_infixe()
+
+            print(self.valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
+            
+            if self._droit:
+                self._droit.parcours_infixe()
 
     
     def parcours_suffixe(self):
-        pass
+        """
+        Cette méthode va parcourir un arbre binaire
+        dans l'ordre suivant : gauche -> droite -> racine.
+        """
+        if self is not None:
+
+            if  self._gauche:
+                self._gauche.parcours_suffixe()
+
+            print(self.valeur)
+            
+            if self._droit:
+                self._droit.parcours_suffixe()
 
 
-    def parcours_largeur(self):
-        pass
+    def parcours_largeur(self, etage_demander, niveau_actuel=0):
+        """
+        On cherche la largeur spécifique d'un étage donnée
+        On envoie compte le nombre de noeud présent à un étage
+        grâce à un compteur et une récursion qui parcours l'arbre
+        de manière similaire au méthode précedente
+        """
 
-   
+        # 0 s'il n'y pas de descendant 
+        if self is None:
+            return 0
+        
+        # Ajoute 1 uniquement si on est au niveau demandé
+        if niveau_actuel == etage_demander:
+            return 1
+        
+        total_enfants = 0
+
+        # On demande au fils gauche (s'il existe) de chercher au niveau suivant
+        if self.get_gauche() is not None:
+            total_enfants += self.get_gauche().largeur_etage(etage_demander, niveau_actuel + 1)
+
+        # On demande au fils droit (s'il existe) de faire de même
+        if self.get_droit() is not None:
+            total_enfants += self.get_droit().largeur_etage(etage_demander, niveau_actuel + 1)
+        
+        # On renvoie la somme accumulée
+        return total_enfants
+
+
+    def largeur_max(self):
+        """
+        Calcule la largeur maximale de l'arbre    
+        """
+        
+        ascenceur = 0
+        largeur_max = 0 # personne à l'étage 0 (la racine)
+        largeur_actuelle = 7 # initialisation à une valeur arbitraire pour entrer dans la boucle
+
+        # Tant que l'on est pas arrivé à un étage sans personne
+        # On continue de monter dans l'arbre
+        while largeur_actuelle != 0: 
+            largeur_actuelle = self.parcours_largeur(ascenceur) # personne a l'étage suivant
+            if largeur_max < largeur_actuelle:
+                largeur_max = largeur_actuelle
+            ascenceur += 1
+
+        return largeur_max
+
     def __str__(self):
         pass
             
