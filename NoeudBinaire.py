@@ -102,9 +102,10 @@ class NoeudBinaire:
         else:
             print("L'élément existe déjà")
 
-#============#
-#  Membre B -  #
-#============#
+
+#====================#
+#  Membre B - WESLEY #
+#====================#
 
     def parcours_prefixe(self):
         """
@@ -118,14 +119,14 @@ class NoeudBinaire:
             print(self.valeur)
 
             # On regarde si une branche gauche existe 
-            if  self.get_gauche():
+            if  self._gauche:
                 # On se déplace vers la racine au bout de la racine de gauche
-                self.get_gauche().parcours_prefixe()
+                self._gauche.parcours_prefixe()
 
             # On regarde si une branche droite existe
-            if self.get_droit():
+            if self._droite:
                 # On se déplace vers la racine au bout de la racine de droite
-                self.get_droit().parcours_prefixe()
+                self._droit.parcours_prefixe()
 
 
     def parcours_infixe(self):
@@ -136,13 +137,13 @@ class NoeudBinaire:
 
         if self is not None:
 
-            if  self.get_gauche():
-                self.get_gauche().parcours_prefixe()
+            if  self._gauche:
+                self._gauche.parcours_infixe()
 
             print(self.valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
             
-            if self.get_droit():
-                self.get_droit().parcours_prefixe()
+            if self._droit:
+                self._droit.parcours_infixe()
 
     
     def parcours_suffixe(self):
@@ -152,28 +153,64 @@ class NoeudBinaire:
         """
         if self is not None:
 
-            if  self.get_gauche():
-                self.get_gauche().parcours_prefixe()
+            if  self._gauche:
+                self._gauche.parcours_suffixe()
 
             print(self.valeur)
             
-            if self.get_droit():
-                self.get_droit().parcours_prefixe()
+            if self._droit:
+                self._droit.parcours_suffixe()
 
 
-    def parcours_largeur(self):
+    def parcours_largeur(self, etage_demander, niveau_actuel=0):
         """
-        
+        On cherche la largeur spécifique d'un étage donnée
+        On envoie compte le nombre de noeud présent à un étage
+        grâce à un compteur et une récursion qui parcours l'arbre
+        de manière similaire au méthode précedente
         """
-        if self.est_feuille():
+
+        # 0 s'il n'y pas de descendant 
+        if self is None:
             return 0
-
-        h_gauche = self.gauche.hauteur() if self.gauche else 0
-        h_droite = self.droit.hauteur() if self.droit else 0
         
-        return 1 + max(h_gauche, h_droite)
+        # Ajoute 1 uniquement si on est au niveau demandé
+        if niveau_actuel == etage_demander:
+            return 1
+        
+        total_enfants = 0
 
-   
+        # On demande au fils gauche (s'il existe) de chercher au niveau suivant
+        if self.get_gauche() is not None:
+            total_enfants += self.get_gauche().largeur_etage(etage_demander, niveau_actuel + 1)
+
+        # On demande au fils droit (s'il existe) de faire de même
+        if self.get_droit() is not None:
+            total_enfants += self.get_droit().largeur_etage(etage_demander, niveau_actuel + 1)
+        
+        # On renvoie la somme accumulée
+        return total_enfants
+
+
+    def largeur_max(self):
+        """
+        Calcule la largeur maximale de l'arbre    
+        """
+        
+        ascenceur = 0
+        largeur_max = 0 # personne à l'étage 0 (la racine)
+        largeur_actuelle = 7 # initialisation à une valeur arbitraire pour entrer dans la boucle
+
+        # Tant que l'on est pas arrivé à un étage sans personne
+        # On continue de monter dans l'arbre
+        while largeur_actuelle != 0: 
+            largeur_actuelle = self.parcours_largeur(ascenceur) # personne a l'étage suivant
+            if largeur_max < largeur_actuelle:
+                largeur_max = largeur_actuelle
+            ascenceur += 1
+
+        return largeur_max
+
     def __str__(self):
         pass
             
