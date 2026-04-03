@@ -40,7 +40,7 @@ class NoeudBinaire:
     def est_feuille(self):
         """Dans un arbre, une feuille est le bout d'une branche. C'est
           donc un nœud qui n'a pas de fils gauche ET pas de fils droit."""
-        return self._gauche is None and self._droit is None
+        return self._valeur is not None and self._gauche is None and self._droit is None
          
         
     def admet_gauche(self):
@@ -116,7 +116,7 @@ class NoeudBinaire:
         if self is not None: #Condition d'arrêt de la récursion
 
             # On affiche la valeur de la racine 
-            print(self.valeur)
+            print(self._valeur)
 
             # On regarde si une branche gauche existe 
             if  self._gauche:
@@ -124,7 +124,7 @@ class NoeudBinaire:
                 self._gauche.parcours_prefixe()
 
             # On regarde si une branche droite existe
-            if self._droite:
+            if self._droit:
                 # On se déplace vers la racine au bout de la racine de droite
                 self._droit.parcours_prefixe()
 
@@ -140,7 +140,7 @@ class NoeudBinaire:
             if  self._gauche:
                 self._gauche.parcours_infixe()
 
-            print(self.valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
+            print(self._valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
             
             if self._droit:
                 self._droit.parcours_infixe()
@@ -155,11 +155,11 @@ class NoeudBinaire:
 
             if  self._gauche:
                 self._gauche.parcours_suffixe()
-
-            print(self.valeur)
             
             if self._droit:
                 self._droit.parcours_suffixe()
+
+            print(self._valeur)
 
 
     def parcours_largeur(self, etage_demander, niveau_actuel=0):
@@ -169,10 +169,6 @@ class NoeudBinaire:
         grâce à un compteur et une récursion qui parcours l'arbre
         de manière similaire au méthode précedente
         """
-
-        # 0 s'il n'y pas de descendant 
-        if self is None:
-            return 0
         
         # Ajoute 1 uniquement si on est au niveau demandé
         if niveau_actuel == etage_demander:
@@ -181,13 +177,13 @@ class NoeudBinaire:
         total_enfants = 0
 
         # On demande au fils gauche (s'il existe) de chercher au niveau suivant
-        if self.get_gauche() is not None:
-            total_enfants += self.get_gauche().largeur_etage(etage_demander, niveau_actuel + 1)
+        if self._gauche is not None:
+            total_enfants += self._gauche.parcours_largeur(etage_demander, niveau_actuel + 1)
 
         # On demande au fils droit (s'il existe) de faire de même
-        if self.get_droit() is not None:
-            total_enfants += self.get_droit().largeur_etage(etage_demander, niveau_actuel + 1)
-        
+        if self._droit is not None:
+            total_enfants += self._droit.parcours_largeur(etage_demander, niveau_actuel + 1)
+            
         # On renvoie la somme accumulée
         return total_enfants
 
@@ -215,95 +211,26 @@ class NoeudBinaire:
         return largeur_max
 
 
-    def __str__(self, niveau=0):
+    def __str__(self):
+        return self.constructeur()
+
+    def constructeur(self, niveau=0):
         """
         Affiche l'arbre de manière hiérarchique dans le terminal.
         Le paramètre 'niveau' gère l'espacement (l'indentation).
         """
 
+        affichage = ""
+        
         # On parcourt d'abord le fils DROIT (il sera en haut à droite)
-        if self.get_droit() is not None:
-            self.get_droit().afficher(niveau + 1)
+        if self._droit is not None:
+            affichage += self._droit.constructeur(niveau + 1)
 
         # On affiche le nœud actuel avec une indentation proportionnelle au niveau
-        print("    " * niveau + "-> " + str(self.get_valeur()))
+        affichage += "    " * niveau + "-> " + str(self._valeur) + "\n"
 
         # On parcourt le fils GAUCHE (il sera en bas à droite)
-        if self.get_gauche() is not None:
-            self.get_gauche().afficher(niveau + 1)
+        if self._gauche is not None:
+            affichage += self._gauche.constructeur(niveau + 1)
                 
-
-#main
-if __name__ == "__main__":
-
-    #Test de la méthode est_vide
-    print("\n--- Test de la méthode est_vide() ---")
-    noeud_plein = NoeudBinaire("A")
-    noeud_vide = NoeudBinaire(None)
-
-    print(noeud_plein.est_vide())
-    print(noeud_vide.est_vide())
-
-    #Test de la méthode est_feuille
-    print("\n--- Test de la méthode est_feuille() ---")
-    noeud_enfant = NoeudBinaire("Enfant")
-    noeud_parent = NoeudBinaire("Parent", gauche = noeud_enfant)
-
-    print(noeud_enfant.est_feuille())
-    print(noeud_parent.est_feuille())
-
-    #Test de la méthode admet_gauche()
-    print("\n--- Test de la méthode admet_gauche() ---")
-    noeud_enfant = NoeudBinaire("Enfant",)
-    noeud_parent1 = NoeudBinaire("Parent1", gauche = noeud_enfant)
-    noeud_parent2 = NoeudBinaire("Parent2", droit = noeud_enfant)
-
-    print(noeud_parent1.admet_gauche())
-    print(noeud_parent2.admet_gauche())
-
-    #Test de la méthode admet_droit()
-    print("\n--- Test de la méthode admet_droit() ---")
-    noeud_enfant = NoeudBinaire("Enfant",)
-    noeud_parent1 = NoeudBinaire("Parent1", gauche = noeud_enfant)
-    noeud_parent2 = NoeudBinaire("Parent2", droit = noeud_enfant)
-
-    print(noeud_parent1.admet_droit())
-    print(noeud_parent2.admet_droit())
-
-    #Test de la méthode ajouter_element()
-    print("\n--- Test de la méthode ajouter_element() ---")
-    racine = NoeudBinaire(10)
-
-    racine.ajouter_element(5)
-    racine.ajouter_element(15)
-    racine.ajouter_element(3)
-    racine.ajouter_element(7)
-
-    print("Valeur de la racine (Attendu : 10) ->", racine.get_valeur())
-
-    noeud_gauche = racine.get_gauche()
-    print("Fils gauche de 10 (Attendu : 5) ->", noeud_gauche.get_valeur())
-    print("Fils gauche de 5 (Attendu : 3) ->", noeud_gauche.get_gauche().get_valeur())
-    print("Fils droit de 5 (Attendu : 7) ->", noeud_gauche.get_droit().get_valeur())
-    
-    noeud_droit = racine.get_droit()
-    print("Fils droit de 10 (Attendu : 15) ->", noeud_droit.get_valeur())
-    
-    print("\nTest de l'ajout d'un doublon (On ajoute 15 à nouveau) :")
-    racine.ajouter_element(15)
-
-    # Test de la méthode hauteur()
-    print("\n--- Test de la méthode hauteur() ---")
-
-    print("Hauteur de la racine 10 (Attendu : 2) ->", racine.hauteur())
-    
-    noeud_cinq = racine.get_gauche()
-    print("Hauteur du nœud 5 (Attendu : 1) ->", noeud_cinq.hauteur())
-    
-    noeud_quinze = racine.get_droit()
-    print("Hauteur du nœud 15 (Attendu : 0) ->", noeud_quinze.hauteur())
-    
-    print("\nOn ajoute le chiffre 1 tout en bas à gauche...")
-    racine.ajouter_element(1) 
-
-    print("Nouvelle hauteur de la racine 10 (Attendu : 3) ->", racine.hauteur())
+        return affichage
