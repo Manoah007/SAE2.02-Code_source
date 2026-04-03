@@ -18,7 +18,6 @@ class NoeudHuffman(NoeudBinaire):
         # On appelle le constructeur de NoeudBinaire en passant un tuple (chaine, poids) comme valeur du nœud
         super().__init__((chaine, poids), gauche, droit)
 
-
     # Getters                                                              
     def get_chaine(self):
         # Retourne la chaine de caractères du nœud (1er élément du tuple)
@@ -27,7 +26,6 @@ class NoeudHuffman(NoeudBinaire):
     def get_poids(self):
         # Retourne le poids du nœud, la somme des effectifs des caractères présents dans ce sous-arbre (2ème élément du tuple)
         return self._valeur[1]
-
 
     # Affichage    
     def __str__(self, niveau=0):
