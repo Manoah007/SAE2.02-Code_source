@@ -40,7 +40,7 @@ class NoeudBinaire:
     def est_feuille(self):
         """Dans un arbre, une feuille est le bout d'une branche. C'est
           donc un nœud qui n'a pas de fils gauche ET pas de fils droit."""
-        return self._gauche is None and self._droit is None
+        return self._valeur is not None and self._gauche is None and self._droit is None
          
         
     def admet_gauche(self):
