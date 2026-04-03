@@ -116,7 +116,7 @@ class NoeudBinaire:
         if self is not None: #Condition d'arrêt de la récursion
 
             # On affiche la valeur de la racine 
-            print(self.valeur)
+            print(self._valeur)
 
             # On regarde si une branche gauche existe 
             if  self._gauche:
@@ -124,7 +124,7 @@ class NoeudBinaire:
                 self._gauche.parcours_prefixe()
 
             # On regarde si une branche droite existe
-            if self._droite:
+            if self._droit:
                 # On se déplace vers la racine au bout de la racine de droite
                 self._droit.parcours_prefixe()
 
@@ -140,7 +140,7 @@ class NoeudBinaire:
             if  self._gauche:
                 self._gauche.parcours_infixe()
 
-            print(self.valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
+            print(self._valeur) # On recitue la valeur d'un noeud après être passé par sa branche gauche
             
             if self._droit:
                 self._droit.parcours_infixe()
@@ -155,11 +155,11 @@ class NoeudBinaire:
 
             if  self._gauche:
                 self._gauche.parcours_suffixe()
-
-            print(self.valeur)
             
             if self._droit:
                 self._droit.parcours_suffixe()
+
+            print(self._valeur)
 
 
     def parcours_largeur(self, etage_demander, niveau_actuel=0):
@@ -169,10 +169,6 @@ class NoeudBinaire:
         grâce à un compteur et une récursion qui parcours l'arbre
         de manière similaire au méthode précedente
         """
-
-        # 0 s'il n'y pas de descendant 
-        if self is None:
-            return 0
         
         # Ajoute 1 uniquement si on est au niveau demandé
         if niveau_actuel == etage_demander:
@@ -182,12 +178,12 @@ class NoeudBinaire:
 
         # On demande au fils gauche (s'il existe) de chercher au niveau suivant
         if self._gauche is not None:
-            total_enfants += self._gauche.largeur_etage(etage_demander, niveau_actuel + 1)
+            total_enfants += self._gauche.parcours_largeur(etage_demander, niveau_actuel + 1)
 
         # On demande au fils droit (s'il existe) de faire de même
         if self._droit is not None:
-            total_enfants += self._droit.largeur_etage(etage_demander, niveau_actuel + 1)
-        
+            total_enfants += self._droit.parcours_largeur(etage_demander, niveau_actuel + 1)
+            
         # On renvoie la somme accumulée
         return total_enfants
 
@@ -314,12 +310,37 @@ if __name__ == "__main__":
 
     print("Nouvelle hauteur de la racine 10 (Attendu : 3) ->", racine.hauteur())
     """
-    # Test rapide : Création d'une racine et de deux enfants
-    racine = NoeudBinaire("B")
 
-    # "A" est plus petit que "B" -> ira à GAUCHE
-    racine.ajouter_element("A")
+    ##===== Test de la méthode __str__() et de la méthode constructeur() =====##
+    arbre = NoeudBinaire(10)
+    arbre.ajouter_element(5)
+    arbre.ajouter_element(15)
+    arbre.ajouter_element(3)
+    arbre.ajouter_element(7)
 
-    # "C" est plus grand que "B" -> ira à DROITE
-    racine.ajouter_element("C")
-    print(racine)
+    # Visualisation pour vérifier la structure
+    print("--- Structure de l'arbre ---")
+    print(arbre)
+
+    ##===== Test de la méthode parcours_largeur() =====##
+    print("--- Test de parcours_largeur ---")
+    l0 = arbre.parcours_largeur(0)
+    l1 = arbre.parcours_largeur(1)
+    l2 = arbre.parcours_largeur(2)
+    l3 = arbre.parcours_largeur(3)
+
+    print(f"Étage 0 (doit être 1) : {l0}")
+    print(f"Étage 1 (doit être 2) : {l1}")
+    print(f"Étage 2 (doit être 2) : {l2}")
+    print(f"Étage 3 (doit être 0) : {l3}")
+
+    ##===== Test de la méthode largeur_max() =====##
+    print("\n--- Test de largeur_max ---")
+    record = arbre.largeur_max()
+    print(f"La largeur maximale trouvée est : {record}")
+
+    # Petit test de validation
+    if record == 2:
+        print("✅ Succès : La largeur max est correcte !")
+    else:
+        print("❌ Erreur : On attendait 2.")
