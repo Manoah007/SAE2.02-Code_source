@@ -87,7 +87,7 @@ class NoeudHuffman(NoeudBinaire):
     def __str__(self, niveau=0):
         """Affichage hiérarchique de l'arbre avec indentation."""
         # On affiche le nœud actuel avec une indentation proportionnelle à son niveau
-        res = "    " * niveau + f"|-> {self._valeur}\n"
+        res = "    " * niveau + f"|--> {self._valeur}\n"
 
         # On affiche récursivement le sous-arbre gauche puis le sous-arbre droit
         if self.admet_gauche():
@@ -96,3 +96,60 @@ class NoeudHuffman(NoeudBinaire):
             res += self._droit.__str__(niveau + 1)
 
         return res
+    
+    def get_encodages(self, encodages={}, prefixe=""):
+        """
+        Parcourt l'arbre et construit un dictionnaire {caractère: code_huffman}.
+        Branche gauche -> '0', branche droite -> '1'.
+        """
+        # Si c'est une feuille on enregistre le code du caractère
+        if self.est_feuille():
+            encodages[self.get_chaine()] = prefixe if prefixe else "0"
+        else:
+            # On descend à gauche en ajoutant '0' au préfixe
+            if self.admet_gauche():
+                self._gauche.get_encodages(encodages, prefixe + "0")
+            # On descend à droite en ajoutant '1' au préfixe
+            if self.admet_droit():
+                self._droit.get_encodages(encodages, prefixe + "1")
+
+        return encodages
+
+    def compresser(self, texte):
+        """
+        Compresse le texte en utilisant les encodages de l'arbre.
+        Renvoie la chaine compressée composée de '0' et de '1'.
+        """
+        # On récupère les encodages
+        encodages = self.get_encodages()
+        
+        # On remplace chaque caractère par son code Huffman
+        res = ""
+        for c in texte:
+            res += encodages[c]
+        
+        return res
+    
+    def decompresser(self, texte_compresse):
+        """
+        Décompresse une chaine de '0' et '1' en utilisant l'arbre.
+        Branche gauche -> '0', branche droite -> '1'.
+        """
+        decode = ""
+        noeud_actuel = self
+
+        for bit in texte_compresse:
+            # On descend dans l'arbre selon le bit
+            if bit == "0":
+                noeud_actuel = noeud_actuel.get_gauche()
+            else:
+                noeud_actuel = noeud_actuel.get_droit()
+
+            # Si on arrive sur une feuille on a trouvé un caractère
+            if noeud_actuel.est_feuille():
+                decode += noeud_actuel.get_chaine()
+                # On repart de la racine
+                noeud_actuel = self
+
+        return decode
+
