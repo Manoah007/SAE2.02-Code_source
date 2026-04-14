@@ -152,4 +152,3 @@ class NoeudHuffman(NoeudBinaire):
                 noeud_actuel = self
 
         return decode
-
