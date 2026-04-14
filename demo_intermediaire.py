@@ -34,7 +34,7 @@ def demonstration_abr_lettres():
 def demonstration_huffman():
     print("--- PARTIE 2 : Algorithme de Huffman ---")
     # On utilise une chaîne de caractères pour générer l'arbre
-    phrase = "banane"
+    phrase = "L'algorithme, c'est trop cool !"
     print(f"Texte à compresser : '{phrase}'")
     
     # Calcul des fréquences (Etape 1)
