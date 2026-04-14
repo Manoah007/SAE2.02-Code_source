@@ -1,20 +1,50 @@
 import sys
 import os
-from data import nettoyer_texte, compter_caracteres, taille_ascii
+from data import nettoyer_texte, taille_ascii, compresser, decompresser, taille_compressee
+from NoeudHuffman import NoeudHuffman
+
+# Récupération du dossier en paramètre
+if len(sys.argv) < 2:
+    print("Usage : python3 main.py <dossier_input>")
+    sys.exit(1)
 
 input_dir = sys.argv[1]
 
-#Pour le moment ce main est temporaire en attendant vos fichiers
 for f in os.listdir(input_dir):
     if f.endswith('.txt'):
         f_path = os.path.join(input_dir, f)
+
+        # --- Lecture du fichier ---
         with open(f_path, 'r', encoding='utf-8') as fichier:
             texte_brut = fichier.read()
-        
-        texte = nettoyer_texte(texte_brut)
-        liste = compter_caracteres(texte)
-        taille_initiale = taille_ascii(texte)
-        
+
         print(f"Fichier {f_path} chargé.")
-        print(f"Taille initiale : {taille_initiale} bits")
-        print(f"Liste des caractères : {liste[:5]}...")  # Affiche les 5 premiers
+
+        # --- Nettoyage ASCII ---
+        texte = nettoyer_texte(texte_brut)
+        print("Encodage du texte en ASCII OK.")
+
+        # --- Construction de l'arbre + compression ---
+        print("Construction de l'arbre de Huffman. Compression du texte.")
+
+        racine = NoeudHuffman.construire(texte)
+        codes = NoeudHuffman.encoder(racine)
+        texte_compresse = compresser(texte, codes)
+
+        print("Construction de l'arbre OK.        Compression OK.")
+
+        # --- Tailles ---
+        taille_init = taille_ascii(texte)
+        taille_comp = taille_compressee(texte_compresse)
+
+        print(f"Taille initiale :   {taille_init} bits")
+        print(f"Taille compressée : {taille_comp} bits")
+
+        # --- Vérification décompression (optionnel, pour valider) ---
+        # texte_decode = decompresser(texte_compresse, racine)
+        # if texte_decode == texte:
+        #     print("Vérification décompression : OK")
+        # else:
+        #     print("Vérification décompression : ERREUR")
+
+        print()
