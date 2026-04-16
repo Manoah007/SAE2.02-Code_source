@@ -1,6 +1,6 @@
 import sys
 import os
-from data import nettoyer_texte, taille_ascii, compresser, decompresser, taille_compressee
+from data import nettoyer_texte, taille_ascii, taille_compressee
 from NoeudHuffman import NoeudHuffman
 
 # Récupération du dossier en paramètre
@@ -29,7 +29,7 @@ for f in os.listdir(input_dir):
 
         racine = NoeudHuffman.construire(texte)
         codes = NoeudHuffman.encoder(racine)
-        texte_compresse = compresser(texte, codes)
+        texte_compresse = racine.compresser(texte)
 
         print("Construction de l'arbre OK.        Compression OK.")
 
