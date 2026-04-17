@@ -1,11 +1,14 @@
 class NoeudBinaire:
 
+    # ---------------------------------#
+    #  INITIALISATION & ENCAPSULATION  #
+    # ---------------------------------#
     def __init__(self, valeur, gauche=None, droit=None): #constructeur
         self._valeur = valeur # le '_' signifie que l'attributs est privé
         self._gauche = gauche
         self._droit = droit
 
-    #Getters 
+    # Getters #
     def get_valeur(self):
         return self._valeur
     
@@ -15,7 +18,7 @@ class NoeudBinaire:
     def get_droit(self):
         return self._droit
 
-    #Setters
+    # Setters #
     def set_valeur(self,nouvelle_valeur):
         if nouvelle_valeur != "":
             self._valeur = nouvelle_valeur
@@ -28,8 +31,12 @@ class NoeudBinaire:
     def set_droit(self, nouveau_droit):
             self._droit = nouveau_droit
 
-    #Méthodes
-    #Membre A
+##========= MÉTHODES ==========##
+
+#====================#
+#  Membre A - ARTHY  #
+#====================#
+
     def est_vide(self):
         """Un nœud est vide s'il ne contient rien du tout. 
         Donc sa valeur, son fils gauche et son fils droit doivent tous 
@@ -57,15 +64,20 @@ class NoeudBinaire:
     
     def hauteur(self):
         """
-        Calcule la hauteur du nœud de manière récursive.
-        La hauteur est définie comme la longueur du chemin le plus long 
-        entre ce nœud et une feuille. Un nœud feuille a une hauteur de 0.
+        On cherche la hauteur maximal (distance entre la racine et la feuille la plus éloignée) 
+        d'un arbre pour prévoir la taille qu'il va prendre dans l'affichage. 
+
+        On veut prévoir la performance de l'arbre pour qu'il aller chercher 
+        une feuille dans le pire des cas (si l'arbre est très déséquilibré).
+
+        Le calcule est récursif.
         
-        Retourne :
-            int : La hauteur de l'arbre à partir de ce nœud.
+        Retourne : int - La hauteur de l'arbre à partir de ce nœud.
         """
+
         if self.est_feuille():
             return 0
+        
         h_gauche = 0
         h_droit = 0
 
@@ -80,13 +92,11 @@ class NoeudBinaire:
     
     def ajouter_element(self, element):
         """
-        Insère un nouvel élément dans l'arbre en respectant la structure 
-        d'un Arbre Binaire de Recherche (ABR) :
+        Insère un nouvel élément dans l'arbre :
         - Si l'élément est inférieur à la valeur du nœud, on va à gauche.
         - Si l'élément est supérieur, on va à droite.
         
-        Args:
-            element : La valeur à insérer dans l'arbre.
+        Paramètre : element : La valeur à insérer dans l'arbre.
         """
         
         if element < self._valeur:
@@ -109,6 +119,8 @@ class NoeudBinaire:
 
     def parcours_prefixe(self):
         """
+        Le parcours préfixe est nécessaire pour sauvegarder/cloner la structure exacte de l'arbre
+
         Cette méthode va parcourir un arbre binaire
         dans l'ordre suivant : racine -> gauche -> droite.
         """
@@ -131,6 +143,8 @@ class NoeudBinaire:
 
     def parcours_infixe(self):
         """ 
+        Le parcours infixe sert à extraire les données dans l'ordre croissant (tri)
+
         Cette méthode va parcourir un arbre binaire
         dans l'ordre suivant : gauche -> racine -> droite.
         """
@@ -148,6 +162,9 @@ class NoeudBinaire:
     
     def parcours_suffixe(self):
         """
+        Le parcours suffixe est indispensable pour supprimer proprement
+
+        l'arbre en libérant les feuilles avant leurs parents.
         Cette méthode va parcourir un arbre binaire
         dans l'ordre suivant : gauche -> droite -> racine.
         """
@@ -165,7 +182,8 @@ class NoeudBinaire:
     def parcours_largeur(self, etage_demander, niveau_actuel=0):
         """
         On cherche la largeur spécifique d'un étage donnée
-        On envoie compte le nombre de noeud présent à un étage
+        
+        On compte le nombre de noeud présent à un étage
         grâce à un compteur et une récursion qui parcours l'arbre
         de manière similaire au méthode précedente
         """
@@ -198,8 +216,6 @@ class NoeudBinaire:
         largeur_max = 0 # personne à l'étage 0 (la racine)
         largeur_actuelle = 7 # initialisation à une valeur arbitraire pour entrer dans la boucle
 
-        # Tant que l'on est pas arrivé à un étage sans personne
-        # On continue de monter dans l'arbre
         while largeur_actuelle != 0: 
             largeur_actuelle = self.parcours_largeur(ascenceur) # personne a l'étage suivant
             

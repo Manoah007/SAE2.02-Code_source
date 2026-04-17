@@ -1,56 +1,61 @@
-from NoeudBinaire import NoeudBinaire
+import sys
+import os
+from data import *
 from NoeudHuffman import NoeudHuffman
 
-def demonstration_abr_lettres():
-    print("--- PARTIE 1 : Arbre Binaire de Recherche (ABR) ---")
-    
-    # On commence avec une lettre "centrale" (M) pour avoir un arbre équilibré
-    racine = NoeudBinaire("M")
-    
-    # Insertion de lettres dans le désordre
-    # 'F' ira à gauche de 'M', 'S' à droite, etc.
-    lettres = ["F", "S", "B", "I", "P", "X"]
-    for l in lettres:
-        racine.ajouter_element(l)
-    
-    print("\nStructure de l'arbre (Visualisation hiérarchique) :")
-    # Utilise ta méthode __str__ qui appelle constructeur()
-    print(racine)
-    
-    print(f"Hauteur de l'arbre : {racine.hauteur()}") #
-    print(f"Largeur maximale : {racine.largeur_max()}") #
-    
-    print("\n--- Vérification des parcours ---")
-    print("Préfixe (Racine -> G -> D) :", end=" ")
-    racine.parcours_prefixe() #
-    
-    print("\nInfixe (Alphabet trié : B F I M P S X) :", end=" ")
-    racine.parcours_infixe() #
-    
-    print("\nSuffixe (G -> D -> Racine) :", end=" ")
-    racine.parcours_suffixe() #
-    print("\n" + "="*50 + "\n")
+# Récupération du dossier en paramètre
+if len(sys.argv) < 2:
+    print("Usage : python3 main.py <dossier_input>")
+    sys.exit(1)
 
-def demonstration_huffman():
-    print("--- PARTIE 2 : Algorithme de Huffman ---")
-    # On utilise une chaîne de caractères pour générer l'arbre
-    phrase = "banane"
-    print(f"Texte à compresser : '{phrase}'")
-    
-    # Calcul des fréquences (Etape 1)
-    frequences = NoeudHuffman.effectifs(phrase)
-    print(f"Effectifs calculés : {frequences}")
-    
-    # Construction de l'arbre de Huffman
-    arbre = NoeudHuffman.construire(phrase)
-    
-    print("\nArbre de Huffman généré :")
-    # Utilise ta méthode __str__ spécifique à Huffman
-    print(arbre)
-    
-    # Le poids total doit être égal au nombre de lettres (6 pour 'banane')
-    print(f"Poids total (somme des fréquences) : {arbre.get_poids()}")
+# On assigne à la variable le nom du dossier passé en paramètre (ex: "input/")
+input_dir = sys.argv[1]
 
-if __name__ == "__main__":
-    demonstration_abr_lettres()
-    demonstration_huffman()
+
+for f in os.listdir(input_dir):
+
+    if f.endswith('.txt'):
+
+        # On récupère le chemin du fichier à partir du dossier input
+        f_path = os.path.join(input_dir, f)
+
+
+        ##--- Lecture du fichier ---##
+        with open(f_path, 'r', encoding='utf-8') as fichier:
+            texte_brut = fichier.read()
+
+        print(f"\nFichier {f_path} chargé.")
+
+
+        ##--- Nettoyage ASCII ---##
+        # Nettoyage du texte - caractères ASCII (valeurs 0 à 127)
+        texte = nettoyer_texte(texte_brut)
+        print("Encodage du texte en ASCII OK.")
+
+
+        ## --- Construction de l'arbre + compression --- #
+        print("Construction de l'arbre de Huffman. Compression du texte.")
+
+        racine = NoeudHuffman.construire(texte)
+        codes = NoeudHuffman.encoder(racine)
+        texte_compresse = racine.compresser(texte)
+
+        print("Construction de l'arbre OK.         Compression OK.")
+
+
+        ##--- Tailles ---##
+        taille_init = taille_ascii(texte)
+        taille_comp = taille_compressee(texte_compresse)
+
+        print(f"Taille initiale   :  {taille_init} bits")
+        print(f"Taille compressée :  {taille_comp} bits")
+
+
+        ##--- Vérification décompression (Validation) ---##
+        texte_decode = racine.decompresser(texte_compresse)
+        if texte_decode == texte:
+            print("Vérification décompression : OK")
+        else:
+            print("Vérification décompression : ERREUR")
+        
+        print("\n" + "-"*50 + "\n")
