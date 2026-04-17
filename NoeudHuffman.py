@@ -6,25 +6,20 @@ class NoeudHuffman(NoeudBinaire):
     a pour valeur un tuple (chaine, poids).
     - chaine : str = les caractères du sous-arbre
     - poids  : int = somme des effectifs des caractères
- 
-    Les setters ne sont pas redéfinis ici car :
-    - on ne modifie jamais un nœud existant dans l'algorithme de Huffman
-    - on crée toujours de nouveaux nœuds parents lors des fusions
-    - les setters de NoeudBinaire sont déjà hérités si besoin
     """
  
-    # ------------------------------------------------------------------ #
-    #  Constructeur                                                        #
-    # ------------------------------------------------------------------ #
+    # ---------------#
+    #  Constructeur  #                                                      #
+    # ---------------#
  
     def __init__(self, chaine, poids, gauche=None, droit=None):
         # On appelle le constructeur de NoeudBinaire en passant
         # un tuple (chaine, poids) comme valeur du nœud
         super().__init__((chaine, poids), gauche, droit)
  
-    # ------------------------------------------------------------------ #
-    #  Getters                                                             #
-    # ------------------------------------------------------------------ #
+    # ---------#
+    #  Getters #
+    # ---------#
  
     def get_chaine(self):
         """Retourne la chaine de caractères du nœud (1er élément du tuple)."""
@@ -34,24 +29,25 @@ class NoeudHuffman(NoeudBinaire):
         """Retourne le poids du nœud (2ème élément du tuple)."""
         return self._valeur[1]
  
-    # ------------------------------------------------------------------ #
-    #  Méthodes statiques : construction de l'arbre                       #
-    # ------------------------------------------------------------------ #
+ #-- Pas de Setter car on ne modifie pas les informations d'un neoud après sa création --#
+
+
+    # ---------------------------------------------------#
+    #    Méthodes statiques : construction de l'arbre    #
+    # ---------------------------------------------------#
  
     @staticmethod
     def effectifs(texte):
         """
-        Étape 1 de l'algorithme de Huffman :
         Construit la liste L des couples (caractère, effectif)
         triée par effectif décroissant.
- 
-        Exemple : effectifs("aab") -> [('a', 2), ('b', 1)]
         """
         eff = {}
         for c in texte:
             eff[c] = eff.get(c, 0) + 1
         return sorted(eff.items(), key=lambda x: x[1], reverse=True)
  
+
     @staticmethod
     def construire(texte):
         """
@@ -63,20 +59,20 @@ class NoeudHuffman(NoeudBinaire):
         if not texte:
             return None
  
-        # Étape 2 : chaque couple (caractère, effectif) forme une feuille
+        # Chaque couple (caractère, effectif) forme une feuille
         liste = [NoeudHuffman(c, e) for c, e in NoeudHuffman.effectifs(texte)]
  
-        # Cas particulier : un seul caractère unique → arbre = une seule feuille
+        # Un seul caractère unique → arbre = une seule feuille
         if len(liste) == 1:
             return liste[0]
  
-        # Étape 6 : on répète jusqu'à obtenir un seul arbre (la racine)
+        # On répète jusqu'à obtenir un seul arbre (la racine)
         while len(liste) > 1:
  
-            # Étape 3 : on trie par effectif croissant pour accéder aux deux plus petits
+            # On trie par effectif croissant pour accéder aux deux plus petits
             liste.sort(key=lambda n: n.get_poids())
  
-            # Étape 4 : on prend les deux nœuds de poids minimal
+            # On prend les deux nœuds de poids minimal
             g = liste.pop(0)
             d = liste.pop(0)
  
@@ -90,37 +86,35 @@ class NoeudHuffman(NoeudBinaire):
                 d
             )
  
-            # Étape 5 : on ajoute le nœud parent à la liste et on recommence
+            # On ajoute le nœud parent à la liste et on recommence
             liste.append(parent)
  
         # On retourne le dernier nœud restant : la racine de l'arbre
         return liste[0]
  
+
     @staticmethod
     def encoder(racine):
         """
         Méthode statique utilitaire appelée depuis main.py.
         Retourne le dictionnaire {caractère: code_huffman} en appelant
         get_encodages() sur la racine.
- 
-        Exemple : encoder(racine) -> {'a': '0', 'b': '10', 'c': '11'}
         """
         if racine is None:
             return {}
         return racine.get_encodages()
  
-    # ------------------------------------------------------------------ #
-    #  Méthodes d'instance : encodage et décodage                         #
-    # ------------------------------------------------------------------ #
+
+
+    # ---------------------------------------------#
+    #  Méthodes d'instance : encodage et décodage  #
+    # ---------------------------------------------#
  
     def get_encodages(self, encodages=None, prefixe=""):
         """
         Parcourt l'arbre récursivement et construit un dictionnaire
         {caractère: code_huffman}.
         Branche gauche -> '0', branche droite -> '1'.
- 
-        Note : on utilise None comme valeur par défaut (et non {}) pour éviter
-        le piège classique Python des arguments mutables partagés entre appels.
         """
         # Initialisation du dictionnaire au premier appel
         if encodages is None:
@@ -137,6 +131,7 @@ class NoeudHuffman(NoeudBinaire):
  
         return encodages
  
+
     def compresser(self, texte):
         """
         Compresse le texte en utilisant les encodages de l'arbre.
@@ -148,14 +143,17 @@ class NoeudHuffman(NoeudBinaire):
             res += encodages[c]
         return res
  
+
+
     def decompresser(self, texte_compresse):
         """
         Décompresse une chaine de '0' et '1' en utilisant l'arbre.
         Branche gauche -> '0', branche droite -> '1'.
  
-        Cas particulier : si la racine est une feuille (un seul caractère unique),
+        Si la racine est une feuille (un seul caractère unique),
         on retourne ce caractère répété autant de fois qu'il y a de bits.
         """
+
         # Cas particulier : arbre = une seule feuille
         if self.est_feuille():
             return self.get_chaine() * self.get_poids()

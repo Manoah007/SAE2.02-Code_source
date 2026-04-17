@@ -13,7 +13,7 @@ def demonstration_abr_lettres():
     for l in lettres:
         racine.ajouter_element(l)
     
-    print("\nStructure de l'arbre (Visualisation hiérarchique) :")
+    print("\nStructure de l'arbre binaire (Visualisation hiérarchique) :")
     # Utilise ta méthode __str__ qui appelle constructeur()
     print(racine)
     
@@ -30,6 +30,8 @@ def demonstration_abr_lettres():
     print("\nSuffixe (G -> D -> Racine) :", end=" ")
     racine.parcours_suffixe() #
     print("\n" + "="*50 + "\n")
+
+
 
 def demonstration_huffman():
     print("--- PARTIE 2 : Algorithme de Huffman ---")
@@ -50,6 +52,8 @@ def demonstration_huffman():
     
     # Le poids total doit être égal au nombre de lettres (6 pour 'banane')
     print(f"Poids total (somme des fréquences) : {arbre.get_poids()}")
+
+
 
 if __name__ == "__main__":
     demonstration_abr_lettres()
